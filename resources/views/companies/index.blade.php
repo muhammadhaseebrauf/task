@@ -151,15 +151,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    @php $sr = 1 @endphp
+                            @php $sr = 1 @endphp
                                     @foreach($companies as $comp)
+                                <tr>
+                                   
                                     <th scope="row">{{$sr}}</th>
                                     <td>{{$comp->name}}</td>
                                     <td>{{$comp->email}}</td>
                                     <td><img src="{{ asset('storage/logos/' . $comp->logo) }}" width="30%" height="30%" alt="Company Logo"> {{$comp->logo}}</td>
                                     <td><a href="{{$comp->website}}" style="color: blue; text-decoration: none;">{{$comp->website}}</a></td>
-                                    <td><button onclick="openPopup()" class="btn btn-warning"><i class="fas fa-edit"></i>Edit</button></td>
+                                     <td>
+                                        <button onclick="openPopup('{{ $comp->id }}', '{{ $comp->name }}', '{{ $comp->email }}')" class="btn btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </td>
                                     <td>
                                         <form action="{{ route('companies.destroy', ['company' => $comp->id]) }}" method="POST">
                                             @csrf
@@ -171,25 +176,24 @@
                                     </td>
 
 
+  
  
-
-
-                                    @endforeach
-                                    @php $sr++ @endphp
                                 </tr>
-                            </tbody>
+                                @php $sr++ @endphp
+
+                                @endforeach
+                             </tbody>
                         </table>
                     </div>
                
                 </div>
 
     
-
                 <div id="editPopup" class="popup">
                     <div class="popup-content">
                         <span class="close" onclick="closePopup()">&times;</span>
                         <form id="editForm" method="POST" action="{{ route('companies.update', ['company' => $comp->id]) }}">
-                            @csrf
+                                        @csrf
                             @method('PUT')
 
                             <div class="form-group">
@@ -204,6 +208,9 @@
                         </form>
                     </div>
                 </div>
+
+
+           
 
                 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -230,16 +237,20 @@
         });
     });
 </script>
-<script>
-    function openPopup() {
-    document.getElementById("editPopup").style.display = "block";
-}
-
-function closePopup() {
-    document.getElementById("editPopup").style.display = "none";
-}
-
-</script>
  
+ 
+<script>
+    function openPopup(compId, compName, compEmail) {
+    document.getElementById("editPopup").style.display = "block";
+    document.getElementById("editForm").action = "/companies/" + compId; // Set the form action dynamically
+    document.getElementById("edit-name").value = compName;
+    document.getElementById("edit-email").value = compEmail;
+}
+
+
+    function closePopup() {
+        document.getElementById("editPopup").style.display = "none";
+    }
+</script>
 
 @endsection
